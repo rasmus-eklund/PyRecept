@@ -472,7 +472,7 @@ class HanteraVaror:
         self.enheter_drop.config(width=5, **kws['drop'])
         enhet_drop_ttp = CreateToolTip(self.enheter_drop, 'Ange ny enhet på valda varor.')
         self.items = tk.StringVar(value='Alla')
-        self.select_items = tk.OptionMenu(self.L_btn_frame1, self.items, *['Alla', 'Egna', 'Kopplat recept', 'Okategoriserade'], command=self.update_L_lb)
+        self.select_items = tk.OptionMenu(self.L_btn_frame1, self.items, *['Alla', 'Egna', 'Kopplat recept', 'Okategoriserade', 'Hemma'], command=self.update_L_lb)
         self.select_items.config(width=12, **kws['drop'])
         select_items_drop_ttp = CreateToolTip(self.select_items, 'Välj vilka varor som ska visas.')
 
@@ -578,7 +578,8 @@ class HanteraVaror:
         item_select = {'Alla': lambda ing: ing,
                'Egna': lambda ing: ing.recept == 'Egna',
                'Kopplat recept': lambda ing: ing.recept != 'Egna',
-               'Okategoriserade': lambda ing: not ing.underkategori}
+               'Okategoriserade': lambda ing: not ing.underkategori,
+               'Hemma': lambda ing: ing.hemma==1}
         selected_items = list(filter(item_select[self.items.get()], self.recept.shopping_list))
         self.shoplist = sorted(selected_items, key=operator.attrgetter(self.L_sort_var.get().lower()))
         if not self.L_filter_hemma_var.get():
@@ -821,6 +822,7 @@ class ConfigureStores:
                       'Underkategori': [i for kat in self.kat_order for i in self.underkat_order[kat]]}).to_csv(os.path.join(wd, 'butiker',
                        f'{self.format_store_name(self.store_lb.get(self.store_lb.curselection())).replace(" ", "_")}.tsv'),
                        sep='\t', index=False, encoding='cp1252', header=True)
+        self.recept.read_stores()
         self.save_btn['bg'] = 'green'
 
     def create_new_store(self):
@@ -907,7 +909,7 @@ class ViewRecipe():
 
         self.ingr_frame = tk.LabelFrame(self.master, text=f'Ingredienser:', **kws['labf'])
         self.ingredients = tk.Text(self.ingr_frame, height=len(self.recipe.ingredienser), **kws['txt'])
-        self.ingredients.insert(1.0, '\n'.join(self.recept.tabify([[c.namn.capitalize(), str(c.kvantitet), c.enhet] for c in self.recipe.ingredienser], 1)))
+        self.ingredients.insert(1.0, '\n'.join(self.recept.tabify([[c.namn.capitalize(), str(c.kvantitet), c.enhet] for c in self.recipe.ingredienser if not is_rec(c)], 1)))
 
         self.instr_frame = tk.LabelFrame(self.master, text=f'Instruktion:', **kws['labf'])
         self.instruktion = tk.Text(self.instr_frame, wrap='word', **kws['txt'])
