@@ -1,0 +1,6 @@
+2
+
+1	rec	Test3
+1	st	banan
+
+instruktion

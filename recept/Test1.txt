@@ -1,0 +1,6 @@
+2
+
+1.0	rec	test2
+1.0	st	ananas
+
+Testa så alla kopplade recept läggs till.

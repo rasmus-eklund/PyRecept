@@ -702,7 +702,7 @@ class view_shopping_list:
         self.master.configure(background=BG)
 
         self.meny = tk.StringVar()
-        self.store = tk.StringVar(value='Lidl Vallentuna')
+        self.store = tk.StringVar()
         self.group_var = tk.BooleanVar(value=False)
         self.sep_var = tk.BooleanVar(value=False)
         self.recipe_var = tk.BooleanVar(value=True)
