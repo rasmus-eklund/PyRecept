@@ -195,10 +195,13 @@ class ReceptKontainer:
         df = pd.read_csv('most_common.tsv', sep='\t', encoding='cp1252')
         unique_names = np.unique(df[df['event']==filt][['namn']], return_counts=True)
         common = pd.DataFrame(np.array(unique_names).T, columns=['namn', 'nr']).sort_values(by='nr', ascending=False)
-        for name in unique_names[0]:
-            for i in ['kvantitet', 'enhet']:
-                common.loc[common['namn']==name, i] = pd.DataFrame(np.array(np.unique(df[(df['event']==filt) & (df['namn']==name)][i], return_counts=True)).T, columns=[i, 'nr']).sort_values(by='nr', ascending=False).iloc[0,0]
-        ings = [Ingrediens(**dict(ing)) for _, ing in common[['namn','kvantitet','enhet']].iterrows()]
+        if len(common) != 0:
+            for name in unique_names[0]:
+                for i in ['kvantitet', 'enhet']:
+                    common.loc[common['namn']==name, i] = pd.DataFrame(np.array(np.unique(df[(df['event']==filt) & (df['namn']==name)][i], return_counts=True)).T, columns=[i, 'nr']).sort_values(by='nr', ascending=False).iloc[0,0]
+            ings = [Ingrediens(**dict(ing)) for _, ing in common[['namn','kvantitet','enhet']].iterrows()]
+        else:
+            ings = []
         return ings
 
     def save_state(self):
